@@ -6,6 +6,15 @@
 #include <stdexcept>
 #include <cmath>
 
+#define FDEBUG
+
+#ifdef FDEBUG
+    #include <iostream>
+    #define FLOG(msg) std::cout << msg << std::endl;
+#else
+    #define FLOG(msg)
+#endif
+
 // ===========================================================================
 // ============================= RefTree class ===============================
 // ===========================================================================
@@ -195,21 +204,6 @@ public:
 };
 
 // ===========================================================================
-// ============================= RefPack class ===============================
-// ===========================================================================
-
-class RefPack
-{
-public:
-    Referable *ptr;
-
-    RefPack(Referable *ptr)
-    {
-        this->ptr = ptr;
-    }
-};
-
-// ===========================================================================
 // ============================= Ref     class ===============================
 // ===========================================================================
 
@@ -257,11 +251,16 @@ public:
         this->setRef(*static_cast<Referable*>(reffer.ptr));
     }
 
-    Ref(RefPack reference)
+    Ref(Referable &obj)
     {
         this->ptr = nullptr;
-        if(dynamic_cast<T*>(reference.ptr) == nullptr) throw std::runtime_error("No matching type on reference set");
-        this->setRef(*(reference.ptr));
+        try {
+            dynamic_cast<T&>(obj);
+        } catch (std::bad_cast &ex) {
+            throw std::runtime_error( std::string("Ref<") + (typeid(T).name()+1) +"> cannot refer an " + (typeid(obj).name()+1) + " object");
+        }
+
+        this->setRef(obj);
     }
 
     ~Ref()
@@ -271,24 +270,19 @@ public:
 
     void operator = (T& obj)
     {
-        this->setRef(static_cast<Referable>(obj));
+        this->setRef(static_cast<Referable&>(obj));
     }
 
-
+#if 0
     void operator = (Ref& reffer)
     {
         this->setRef(*static_cast<Referable*>(reffer.ptr));
     }
+#endif
 
     void operator = (Ref reffer)
     {
         this->setRef(*static_cast<Referable*>(reffer.ptr));
-    }
-
-    void operator = (RefPack reference)
-    {
-        if(dynamic_cast<T*>(reference.ptr) == nullptr) throw std::runtime_error("No matching type on reference set");
-        this->setRef(*(reference.ptr));
     }
 
     T& operator * ()
@@ -320,11 +314,10 @@ public:
     }
 
     template<class T2>
-    RefPack cast()
+    T2& cast()
     {
         static_assert(std::is_base_of<T, T2>::value, "Invalid reference type conversion. Conversions with the fref::to<type>() method need to be from superclass to subclass." );
-        RefPack r(this->ptr);
-        return r;
+        return *static_cast<T2*>(this->ptr);
     }
 
 };
@@ -343,17 +336,16 @@ private:
 
 public:
     template<class T, class ...Args>
-    static RefPack create(Args... args)
+    static T& create(Args... args)
     {
         static_assert(std::is_base_of<FObject, T>::value, "the \'create\' function only construct subclasses of FObject");
         T* ptr = new T(args...);
-        RefPack pack(static_cast<Referable*>(ptr));
-        return pack;
+        //RefPack pack(static_cast<Referable*>(ptr));
+        return *ptr;
     }
 
 };
 
-#define BYREF(type) Ref<type> &
 #define FCOMPATIBLE : public FObject
 #define CREATE FObject::create
 

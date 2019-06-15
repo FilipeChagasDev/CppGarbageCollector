@@ -17,8 +17,13 @@ public:
     Programmer(std::string name) : Person(name) {}
 };
 
+class Mem : public FObject
+{
 
-void show_name( BYREF(Person) p )
+};
+
+
+void show_name( Ref<Person> p )
 {
     std::cout << p->name << std::endl;
 }
@@ -29,9 +34,10 @@ void test()
     Ref<Programmer> b;
 
     // -------- memory leakage test ---------
-    for(int i = 0; i < 500000; i++)
+    for(int i = 0; i < 1000000; i++)
     {
         a = CREATE<Programmer>("Filipe");
+        //a = CREATE<Mem>();
         b = a.cast<Programmer>();
         show_name(a);
     }
