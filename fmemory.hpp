@@ -1,3 +1,18 @@
+/* DO NOT REMOVE THIS HEADER. If yout Team has problems with this code, it's me that you can turn to.
+ *
+ * Author: Filipe Chagas Ferraz
+ * Author Email: filipe.ferraz0@gmail.com
+ * Author GitHub: github.com/FilipeChagasDev
+ * License: MIT
+ *
+ * Description:
+ *      This is a C++ garbage collectior.
+ *      Objects derived from the FObject class will be under the tutelage
+ *      of this mechanism. For this to work, Ref<type> static objects must
+ *      be used instead of pointeiros, and the CREATE<type>(args) function
+ *      must be used instead of the new operator.
+ */
+
 #ifndef FMEMORY_HPP
 #define FMEMORY_HPP
 
@@ -146,16 +161,60 @@ public:
         }
     }
 
+    void insertNodeAfter(Node *node, Node *from)
+    {
+        if(node == nullptr) return;
+
+        if(from == nullptr)
+        {
+            this->insertNode(node);
+        }
+        else
+        {
+            for(Node *i = from; i != nullptr; /*nothing*/ )
+            {
+                if(i->addr == node->addr) return;
+                else if(i->addr < node->addr)
+                {
+                    if(i->right != nullptr)
+                    {
+                        i = i->right;
+                        continue;
+                    }
+                    else
+                    {
+                        node->prev = i;
+                        node->branch = 'r';
+                        i->right = node;
+                        return;
+                    }
+                }
+                else if(i->addr > node->addr)
+                {
+                    if(i->left != nullptr)
+                    {
+                        i = i->left;
+                        continue;
+                    }
+                    else
+                    {
+                        node->prev = i;
+                        node->branch = 'l';
+                        i->left = node;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     Node *find(void *addr)
     {
-        std::function<Node*(Node*)> depth_search = [&](Node *curr)->Node*
+        for(Node *i = this->root; i != nullptr; i = (i->addr > addr ? i->left : i->right))
         {
-            if(curr->addr == addr) return curr;
-            if(curr->left != nullptr) return depth_search(curr->left);
-            if(curr->right != nullptr) return depth_search(curr->right);
-            return nullptr;
-        };
-        return (root != nullptr ? depth_search(this->root) : nullptr );
+            if(i->addr == addr) return i;
+        }
+        return nullptr;
     }
 
     void remove(Node *node)
@@ -171,10 +230,11 @@ public:
         }
         else
         {
-            if(node->branch == 'l') node->prev->left = nullptr;
-            else if(node->branch == 'r') node->prev->right = nullptr;
-            this->insertNode(node->left);
-            this->insertNode(node->right);
+            Node *prev = node->prev;
+            if(node->branch == 'l') prev->left = nullptr;
+            else if(node->branch == 'r') prev->right = nullptr;
+            this->insertNodeAfter(node->left, prev);
+            this->insertNodeAfter(node->right, prev);
             delete node;
         }
     }
