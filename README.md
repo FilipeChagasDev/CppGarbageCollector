@@ -13,29 +13,29 @@ This should be the base class of all classes whose objects should be managed by 
     class Person : public FObject
     {
     protected:
-      string name;
+          string name;
     public:
-      Person(string name)
-      {
-        this->name = name;
-      }
-      
-      string getName()
-      {
-        return this->name;
-      }
+          Person(string name)
+          {
+                this->name = name;
+          }
+
+          string getName()
+          {
+                return this->name;
+          }
     };
     
     
     class Programmer : public Person
     {
     protected:
-      string language;
+          string language;
     public:
-      Programmer(string name, string language) : Person(name)
-      {
-        this->lang = language;
-      }
+          Programmer(string name, string language) : Person(name)
+          {
+                this->lang = language;
+          }
     };
 ```
 In the example above, the Person and Programmer classes are compatible with the garbage collector.
@@ -50,12 +50,12 @@ You can also use the FOBJECT macro, if you prefer, as shown in the following exa
     class Person FOBJECT
     {
     protected:
-      string name;The behavior of the program, in this case, is undefined.
+          string name;The behavior of the program, in this case, is undefined.
     public:
-      Person(string name)
-      {
-        this->name = name;
-      }
+          Person(string name)
+          {
+                this->name = name;
+          }
     };
 ```
 This macro is defined as <i><b>#define FOBJECT : public FObject</b></i>
@@ -68,15 +68,15 @@ The following examples show how to instantiate a Person object and reference it 
 ``` cpp
     void test()
     {
-      Ref<Person> p;
-      p = CREATE<Person>("Filipe");
+          Ref<Person> p;
+          p = CREATE<Person>("Filipe");
     }
 ```
 
 ``` cpp
     void test()
     {
-      Ref<Person> p ( CREATE<Person>("Filipe") );
+          Ref<Person> p ( CREATE<Person>("Filipe") );
     }
 ```
 Notice that the arguments that are passed to the CREATE function are the constructor arguments of the Person class.
@@ -85,7 +85,7 @@ The Ref can also be used as a parameter by reference, as shown in the following 
 ```cpp
    void show_name( Ref<Person> arg )
    {
-      cout << arg->getName() << endl;
+          cout << arg->getName() << endl;
    }
 ```
 
@@ -100,49 +100,49 @@ The '*' and '->' operators can be used with the Ref class in the same way as the
     class Vec3d FOBJECT
     {
     protected:
-      double buff[3];
+          double buff[3];
     public:
-      Vec3d(double x, double y, double z)
-      {
-        this->buff[0] = x;
-        this->buff[1] = y;
-        this->buff[2] = z;
-      }
-      
-      double& operator [] (unsigned int i)
-      {
-        return this->buff[ i % 3 ];
-      }
-      
-      double& operator () (unsigned int i)
-      {
-        return this->buff[ i % 3 ];
-      }
+          Vec3d(double x, double y, double z)
+          {
+                this->buff[0] = x;
+                this->buff[1] = y;
+                this->buff[2] = z;
+          }
+
+          double& operator [] (unsigned int i)
+          {
+                return this->buff[ i % 3 ];
+          }
+
+          double& operator () (unsigned int i)
+          {
+                return this->buff[ i % 3 ];
+          }
     };
     
     void test()
     {
-      Ref<Vec3d> myvector ( CREATE<Vec3d>(5,2,6) );
-      
-      // ---- USING THE [] OPERATOR ----  
-      double x = (*myvector)[0];
-      double y = (*myvector)[1];
-      double z = (*myvector)[2];
-      
-      cout << "vector = [" << x << ", " << y << ", " << z << "]" << endl;
+          Ref<Vec3d> myvector ( CREATE<Vec3d>(5,2,6) );
+
+          // ---- USING THE [] OPERATOR ----  
+          double x = (*myvector)[0];
+          double y = (*myvector)[1];
+          double z = (*myvector)[2];
+
+          cout << "vector = [" << x << ", " << y << ", " << z << "]" << endl;
     }
     
     
     void test2()
     {
-      Ref<Vec3d> myvector ( CREATE<Vec3d>(5,2,6) );
-      
-      // ---- USING THE () OPERATOR ----
-      double x = (*myvector)(0);
-      double y = (*myvector)(1);
-      double z = (*myvector)(2);
-      
-      cout << "vector = [" << x << ", " << y << ", " << z << "]" << endl;
+          Ref<Vec3d> myvector ( CREATE<Vec3d>(5,2,6) );
+
+          // ---- USING THE () OPERATOR ----
+          double x = (*myvector)(0);
+          double y = (*myvector)(1);
+          double z = (*myvector)(2);
+
+          cout << "vector = [" << x << ", " << y << ", " << z << "]" << endl;
     }
 ```
 
@@ -154,13 +154,13 @@ Refs can receive references from other Refs as follows:
 ```cpp
    void test()
    {
-      Ref<Person> a ( CREATE<Person>("Filipe") );
-      Ref<Person> b ( CREATE<Person>("Chagas") );
-      a = b; // 'a' receives the reference from 'b'
-      // The Person object with name "Filipe" is collected.
-      b = a; // 'b' receives the reference from 'a'
-      // 'a' and 'b' had the same reference. Nothing happens.
-      a = CREATE<Person>("Ferraz"); // 'a' receives a new reference
+          Ref<Person> a ( CREATE<Person>("Filipe") );
+          Ref<Person> b ( CREATE<Person>("Chagas") );
+          a = b; // 'a' receives the reference from 'b'
+          // The Person object with name "Filipe" is collected.
+          b = a; // 'b' receives the reference from 'a'
+          // 'a' and 'b' had the same reference. Nothing happens.
+          a = CREATE<Person>("Ferraz"); // 'a' receives a new reference
    }
 ```
 A Ref for a given class can receive subclass objects of this class, as shown in the following example:
@@ -168,10 +168,10 @@ A Ref for a given class can receive subclass objects of this class, as shown in 
 ```cpp
    void test()
    {
-      Ref<Person> a;
-      Ref<Programmer> b ( CREATE<Programmer>("Filipe", "C++") );
-      // Programmer is subclass of Person
-      a = b; // 'a' receives the reference from 'b'
+          Ref<Person> a;
+          Ref<Programmer> b ( CREATE<Programmer>("Filipe", "C++") );
+          // Programmer is subclass of Person
+          a = b; // 'a' receives the reference from 'b'
    }
 ```
 
@@ -189,10 +189,10 @@ The following example shows a case similar to this, which causes a run-time erro
    
    int main()
    {
-      Ref<Human> a;
-      Ref<Dog> b ( CREATE<Dog>() );
-      a = b; // issue here
-      return 0;
+          Ref<Human> a;
+          Ref<Dog> b ( CREATE<Dog>() );
+          a = b; // issue here
+          return 0;
    }
    
    /* PROGRAM OUTPUT:
@@ -207,10 +207,10 @@ The code in this other example causes a compile error. In the case of GCC, the e
 ```cpp
    int main()
    {
-      Ref<Human> a;
-      Ref<Mammal> b ( CREATE<Human>() );
-      a = b; // issue here
-      return 0;
+          Ref<Human> a;
+          Ref<Mammal> b ( CREATE<Human>() );
+          a = b; // issue here
+          return 0;
    }
 ```
 
@@ -220,10 +220,10 @@ This assignment can be done if the cast method is used, as follows:
 ```cpp
    int main()
    {
-      Ref<Human> a;
-      Ref<Mammal> b ( CREATE<Human>() );
-      a = b.cast<Human>();
-      return 0;
+          Ref<Human> a;
+          Ref<Mammal> b ( CREATE<Human>() );
+          a = b.cast<Human>();
+          return 0;
    }
 ```
 
@@ -232,10 +232,10 @@ If the cast is made between incompatible types, a runtime_error will be throwed.
 ```cpp
    int main()
    {
-      Ref<Human> a;
-      Ref<Mammal> b ( CREATE<Dog>() );
-      a = b.cast<Human>(); //issue here
-      return 0;
+          Ref<Human> a;
+          Ref<Mammal> b ( CREATE<Dog>() );
+          a = b.cast<Human>(); //issue here
+          return 0;
    }
    
    /* PROGRAM OUTPUT:
@@ -252,12 +252,12 @@ I do not recommend that you create static objects (without using the CREATE func
    
    int main()
    {
-      // --- NEVER DO THAT ---
-      MyClass obj; //static FObject
-      Ref<MyClass> a; //Ref programmed to work ONLY WITH DYNAMICALLY CREATED FOBJECTS
-      a = obj; //Ref referencing a static FObject
-      // ---------------------
-      return 0;
+          // --- NEVER DO THAT ---
+          MyClass obj; //static FObject
+          Ref<MyClass> a; //Ref programmed to work ONLY WITH DYNAMICALLY CREATED FOBJECTS
+          a = obj; //Ref referencing a static FObject
+          // ---------------------
+          return 0;
    }
 ```
 
