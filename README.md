@@ -50,7 +50,7 @@ You can also use the FOBJECT macro, if you prefer, as shown in the following exa
     class Person FOBJECT
     {
     protected:
-          string name;The behavior of the program, in this case, is undefined.
+          string name;
     public:
           Person(string name)
           {
