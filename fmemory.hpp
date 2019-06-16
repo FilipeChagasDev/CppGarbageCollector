@@ -5,6 +5,8 @@
  * Author GitHub: github.com/FilipeChagasDev
  * License: MIT
  *
+ * GitHub repository: https://github.com/FilipeChagasDev/CppGarbageCollector
+ *
  * Description:
  *      This is a C++ garbage collectior.
  *      Objects derived from the FObject class will be under the tutelage
