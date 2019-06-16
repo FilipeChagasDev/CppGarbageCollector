@@ -306,6 +306,7 @@ public:
     T2& cast()
     {
         static_assert(std::is_base_of<T, T2>::value, "Invalid reference type conversion. Conversions with the fref::to<type>() method need to be from superclass to subclass." );
+        if(dynamic_cast<T2*>(this->ptr) == nullptr) throw std::runtime_error(std::string("Impossible cast from ") + (typeid(T).name()+1) + " to " + (typeid(T2).name()+1) );
         return *static_cast<T2*>(this->ptr);
     }
 };
