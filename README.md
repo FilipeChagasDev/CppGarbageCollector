@@ -1,3 +1,5 @@
+#### If you want to use this in your project, just download the <i>'fmemory.hpp'</i> file and include it, all the declarations and implementations are contained in it. This file only depends on the standard C++17 libraries.
+
 # C++ Garbage Collector
 The 'fmemory.hpp' file contains the implementation of a simple garbage collection mechanism in C++ (to be used in C++ programs, and not necessarily in interpreters of other languages made in C++). Here's a brief description of how to use it...
 
