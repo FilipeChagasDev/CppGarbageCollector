@@ -199,7 +199,7 @@ The following example shows a case similar to this, which causes a <i>runtime_er
    
    /* PROGRAM OUTPUT:
     terminate called after throwing an instance of 'std::runtime_error'
-      what():  Ref<Person> cannot refer an Mem object
+      what():  Ref<Human> cannot refer an Dog object
    */
 ```
 
