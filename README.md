@@ -61,7 +61,7 @@ You can also use the FOBJECT macro, if you prefer, as shown in the following exa
 This macro is defined as <i><b>#define FOBJECT : public FObject</b></i>
 
 ## the CREATE function and the Ref class
-FObject family classes can not be instantiated by the 'new' operator and can not be deleted by the 'delete' operator. Instead, they should be instantiated by the FObject::create function (or simply CREATE) and should be referenced by static objects of the Ref class instead of pointers. You can not explicitly delete objects from the FObject family.
+FObject family classes can not be instantiated by the 'new' operator and can not be deleted by the 'delete' operator. Instead, they should be instantiated by the <b>FObject::create</b> function (or simply <b>CREATE</b>) and should be referenced by static objects of the Ref class instead of pointers. You can not explicitly delete objects from the FObject family.
 
 The following examples show how to instantiate a Person object and reference it by a Ref:
 
@@ -79,7 +79,7 @@ The following examples show how to instantiate a Person object and reference it 
           Ref<Person> p ( CREATE<Person>("Filipe") );
     }
 ```
-Notice that the arguments that are passed to the CREATE function are the constructor arguments of the Person class.
+Notice that the arguments that are passed to the <i>CREATE</i> function are the constructor arguments of the Person class.
 The Ref can also be used as a parameter by reference, as shown in the following example:
 
 ```cpp
@@ -176,7 +176,7 @@ A Ref for a given class can receive subclass objects of this class, as shown in 
 ```
 
 However, a reference to a particular class can NOT receive an object that is not of this same class or a subclass of that class, even if that object has a common superclass.
-The following example shows a case similar to this, which causes a run-time error:
+The following example shows a case similar to this, which causes a <i>runtime_error</i> exception:
 
 ```cpp
    #include "fmemory.hpp"
@@ -214,8 +214,8 @@ The code in this other example causes a compile error. In the case of GCC, the e
    }
 ```
 
-This is because, even though Ref<Mammal> references a Human object, Ref<Human> can not receive an assignment of Ref<Mammal> without a cast being made.
-This assignment can be done if the cast method is used, as follows:
+This is because, even though <i>Ref<Mammal></i> references a Human object, <i>Ref<Human></i> can not receive an assignment of <i>Ref<Mammal></i> without a cast being made.
+This assignment can be done if the <b>cast</b> method is used, as follows:
 
 ```cpp
    int main()
@@ -227,7 +227,7 @@ This assignment can be done if the cast method is used, as follows:
    }
 ```
 
-If the cast is made between incompatible types, a runtime_error will be throwed. The following example shows one such case:
+If the cast is made between incompatible types, a <i>runtime_error</i> will be throwed. The following example shows one such case:
 
 ```cpp
    int main()
@@ -262,3 +262,110 @@ I do not recommend that you create static objects (without using the CREATE func
 ```
 
 The behavior of the program, in this case, is undefined.
+
+## NULL Refs
+Refs can not receive NULL or nullptr as assignment. Instead, you should use the <b>setNull</b> method, as shown in the following example:
+
+```cpp
+   #include "fmemory.hpp"
+   class MyClass FOBJECT { /* nothing */ };
+   
+   int main()
+   {
+          Ref<MyClass> a ( CREATE<MyClass>() );
+          a.setNull(); //Ref becomes null
+          //The MyClass object is collected
+          return 0;
+   }
+```
+
+to verify that a Ref is null, use the <b>isNull</b> method...
+
+
+```cpp
+   #include <iostream>
+   #include "fmemory.hpp"
+   using namespace std;
+   
+   class MyClass FOBJECT { /* nothing */ };
+   
+   int main()
+   {
+          Ref<MyClass> a ( CREATE<MyClass>() );
+          a.setNull(); //Ref becomes null
+          //The MyClass object is collected
+          
+          if(a.isNull() == true) cout << "a is null" << endl;
+          else cout << "a is not null" << endl;
+          
+          return 0;
+   }
+   
+   /*   PROGRAM OUTPUT:
+            a is null
+   */
+```
+
+## Comparing references
+The relational operators '==', '>', '<', '<=', '>=' and '!=' do not works with Refs. To verify that two Refs refer to the same object, use the <b>sameReference</b> method, as shown in the following example:
+
+
+```cpp
+   #include <iostream>
+   #include "fmemory.hpp"
+   using namespace std;
+   
+   class MyClass FOBJECT { /* nothing */ };
+   
+   int main()
+   {
+          Ref<MyClass> a ( CREATE<MyClass>() );
+          Ref<MyClass> b;
+          b = a;
+          
+          if(a.sameReference(b) == true) cout << "a = b" << endl;
+          else cout << "a != b" << endl;
+          
+          
+          if(b.sameReference(a) == true) cout << "b = a" << endl;
+          else cout << "b != a" << endl;
+          
+          return 0;
+   }
+   
+   /*   PROGRAM OUTPUT:
+            a = b
+            b = a
+   */
+```
+
+If both Refs are null, the sameReference method also returns true:
+
+```cpp
+   #include <iostream>
+   #include "fmemory.hpp"
+   using namespace std;
+   
+   class MyClass FOBJECT { /* nothing */ };
+   
+   int main()
+   {
+          Ref<MyClass> a;
+          Ref<MyClass> b;
+          b = a;
+          
+          if(a.sameReference(b) == true) cout << "a = b" << endl;
+          else cout << "a != b" << endl;
+          
+          
+          if(b.sameReference(a) == true) cout << "b = a" << endl;
+          else cout << "b != a" << endl;
+          
+          return 0;
+   }
+   
+   /*   PROGRAM OUTPUT:
+            a = b
+            b = a
+   */
+```
